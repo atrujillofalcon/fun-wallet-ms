@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://iobuilders:78yfNWjC8TnwG@fun-wallet-mongodb.iech7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
