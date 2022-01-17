@@ -208,7 +208,7 @@ components:
         - amount
         - type
       allOf:
-        - $ref: "#/components/schemas/Transaction"
+        - $ref: "#/components/schemas/TransactionRQDTO"
     CreateTransactionResponse:
       type: object
       properties:
@@ -255,27 +255,30 @@ components:
     Transaction:
       type: object
       description: Transaction entity
+      allOf:
+        - $ref: "#/components/schemas/TransactionRQDTO"
       properties:
         id:
           type: string
           example: 1
-        account_id:
-          type: integer
-          example: 10
-        amount:
-          type: number
-          format: "double"
-          example: 45.20
         fee:
           type: number
           format: "double"
           example: 2.25
-        type:
-          type: string
-          enum: [ "DEPOSIT", "WITHDRAWAL", "TRANSFER", "OPERATION"]
         status:
           type: string
           enum: [ "PENDING", "DONE", "CANCELLED", "FAILED" ]
+    TransactionRQDTO:
+      type: object
+      description: Transaction entity
+      properties:
+        amount:
+          type: number
+          format: "double"
+          example: 45.20
+        type:
+          type: string
+          enum: [ "DEPOSIT", "WITHDRAWAL", "TRANSFER", "OPERATION" ]
         from:
           type: string
           description: Transaction origin

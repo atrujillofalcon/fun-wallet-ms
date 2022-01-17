@@ -1,1 +1,29 @@
-# fun-wallet-ms
+# Fun Wallet Ms Project
+
+Practice excersise to simulate a bank.
+
+
+## Quickstart
+### Prerequisites
+- Java 11
+- Gradle
+
+Run microservice with:
+```sh
+./gradlew bootRun
+```
+
+## Tech Features
+The project uses a number of fun tech:
+
+- API First Design
+- Build with Kotlin
+- Reactive microservice with Webflux
+- Hexagonal architecture and some DDD concepts
+
+## Functional Features
+This project simulates the following functionalities:
+
+- Bank user creation
+- Creation of accounts related to an user.
+- Accounts operations (deposit, transfers, account balance)
