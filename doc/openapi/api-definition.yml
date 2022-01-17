@@ -27,6 +27,8 @@ paths:
     get:
       operationId: getAccounts
       summary: Return the account list
+      parameters:
+        - $ref: "#/components/parameters/userIdQueryParam"
       responses:
         200:
           description: Accounts list
@@ -55,7 +57,7 @@ paths:
       operationId: getAccountDetail
       summary: Return an account detail
       parameters:
-        - $ref: "#/components/parameters/accountIdParam"
+        - $ref: "#/components/parameters/accountIdPathParam"
       responses:
         200:
           description: Account detail
@@ -68,7 +70,7 @@ paths:
       operationId: getAccountTransactions
       summary: Get transactions related to specific account
       parameters:
-        - $ref: "#/components/parameters/accountIdParam"
+        - $ref: "#/components/parameters/accountIdPathParam"
       responses:
         200:
           description: Transactions list
@@ -80,7 +82,7 @@ paths:
       operationId: createAccountTransaction
       summary: Create new transaction
       parameters:
-        - $ref: "#/components/parameters/accountIdParam"
+        - $ref: "#/components/parameters/accountIdPathParam"
       requestBody:
         required: true
         content:
@@ -99,7 +101,7 @@ paths:
 #      operationId: createAccountDeposit
 #      description: Create a new deposit
 #      parameters:
-#        - $ref: "#/components/parameters/accountIdParam"
+#        - $ref: "#/components/parameters/accountIdPathParam"
 #      requestBody:
 #        required: true
 #        content:
@@ -115,16 +117,23 @@ paths:
 #                $ref: "#/components/schemas/GetAccountTransactionsResponse"
 components:
   parameters:
-    accountIdParam:
+    accountIdPathParam:
       name: accountId
       in: path
       description: Account identifier
       required: true
       schema:
         type: string
-    userIdParam:
+    userIdPathParam:
       name: userId
       in: path
+      description: User identifier
+      required: true
+      schema:
+        type: string
+    userIdQueryParam:
+      name: userId
+      in: query
       description: User identifier
       required: true
       schema:
@@ -198,7 +207,7 @@ components:
       type: object
       properties:
         data:
-          $ref: "#/components/schemas/Transaction"
+          $ref: "#/components/schemas/AccountDetailResponse"
         metadata:
           $ref: "#/components/schemas/ResponseMetadata"
     CreateTransactionRequest:
@@ -252,6 +261,14 @@ components:
           type: number
           format: "double"
           example: 10000
+    AccountDetailResponse:
+      type: object
+      description: Account detail response
+      allOf:
+        - $ref: "#/components/schemas/Account"
+      properties:
+        transactions_resource:
+          type: string
     Transaction:
       type: object
       description: Transaction entity

@@ -11,13 +11,23 @@ import reactor.core.publisher.Mono
 @Component
 class AccountPersistenceRepositoryAdapter(val databaseRepository: AccountDatabaseRepository) : AccountRepository {
 
-    override fun getByUser(userId: String): Flux<Account> {
+    override fun getAccountById(accountId: String): Mono<Account> {
+        return databaseRepository.findById(accountId)
+            .map { it.toDomain() }
+    }
+
+    override fun getAccountsByUser(userId: String): Flux<Account> {
         return databaseRepository.findAccountEntitiesByUserId(userId)
             .map { it.toDomain() }
     }
 
     override fun getPrimaryAccountByUser(userId: String): Mono<Account> {
         return databaseRepository.findAccountEntitiesByPrimaryIsTrue()
+            .map { it.toDomain() }
+    }
+
+    override fun getAccounts(): Flux<Account> {
+        return databaseRepository.findAll()
             .map { it.toDomain() }
     }
 

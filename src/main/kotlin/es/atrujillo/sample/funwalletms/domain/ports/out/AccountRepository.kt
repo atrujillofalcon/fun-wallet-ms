@@ -6,9 +6,13 @@ import reactor.core.publisher.Mono
 
 interface AccountRepository {
 
-    fun getByUser(userId: String): Flux<Account>
+    fun getAccountById(accountId: String): Mono<Account>
+
+    fun getAccountsByUser(userId: String): Flux<Account>
 
     fun getPrimaryAccountByUser(userId: String): Mono<Account>
+
+    fun getAccounts(): Flux<Account>
 
     fun saveAccount(account: Account) : Mono<Account>
 

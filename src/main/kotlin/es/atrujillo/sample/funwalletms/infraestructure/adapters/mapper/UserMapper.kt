@@ -16,6 +16,7 @@ interface UserMapper {
     @Mapping(target = "data.firstName", source = "firstName")
     @Mapping(target = "data.lastName", source = "lastName")
     @Mapping(target = "data.username", source = "username")
+    @Mapping(target = "metadata", expression = "java(MapperMockUtility.Companion.metadataMockCreator())")
     fun domainUserToResponse(user: User):CreateUserResponse
 
 }
