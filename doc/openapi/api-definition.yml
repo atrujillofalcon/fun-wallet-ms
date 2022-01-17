@@ -208,7 +208,9 @@ components:
           type: string
           example: 10
         user_id:
-          type: integer
+          type: string
+        alias:
+          type: string
         primary:
           type: boolean
         type:

@@ -4,8 +4,9 @@ import es.atrujillo.sample.funwalletms.domain.model.Account
 import es.atrujillo.sample.funwalletms.domain.model.AccountType
 
 data class AccountEntity(
-    val id: String,
+    val id: String?,
     val userId: String,
+    val alias: String?,
     val primary: Boolean,
     val type: AccountType,
     val currency: String,
@@ -13,14 +14,14 @@ data class AccountEntity(
 ) {
 
     fun toDomain(): Account {
-        return Account(id, userId, primary, type, currency, balance)
+        return Account(id, userId, alias, primary, type, currency, balance)
     }
 
     companion object {
         fun fromDomain(account: Account): AccountEntity {
             return AccountEntity(
-                account.id, account.userId, account.primary, account.type,
-                account.currency, account.balance
+                account.id, account.userId, account.alias, account.primary,
+                account.type, account.currency, account.balance
             )
         }
     }
