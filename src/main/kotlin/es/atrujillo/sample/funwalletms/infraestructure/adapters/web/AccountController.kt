@@ -3,8 +3,10 @@ package es.atrujillo.sample.funwalletms.infraestructure.adapters.web
 import es.atrujillo.sample.funwalletms.api.AccountsApi
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountConsultUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountCreationUseCase
+import es.atrujillo.sample.funwalletms.domain.ports.`in`.TransactionCreationUseCase
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.AccountMapper
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.MapperMockUtility
+import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.TransactionMapper
 import es.atrujillo.sample.funwalletms.model.*
 import org.mapstruct.factory.Mappers
 import org.springframework.http.ResponseEntity
@@ -14,8 +16,10 @@ import reactor.core.publisher.Mono
 
 @RestController
 class AccountController(
-    val createAccountUseCase: AccountCreationUseCase, val accountConsultUseCase: AccountConsultUseCase
-    ) : AccountsApi {
+    val createAccountUseCase: AccountCreationUseCase,
+    val accountConsultUseCase: AccountConsultUseCase,
+    val createTransactionUseCase: TransactionCreationUseCase
+) : AccountsApi {
 
     private final val mapper: AccountMapper = Mappers.getMapper(AccountMapper::class.java)
 
@@ -28,10 +32,15 @@ class AccountController(
 
     }
 
-    override fun createAccountTransaction(accountId: String?, createTransactionRequest: Mono<CreateTransactionRequest>?, exchange: ServerWebExchange?):
+    override fun createAccountTransaction(accountId: String?, createTransactionRequest: Mono<CreateTransactionRequest>, exchange: ServerWebExchange?):
             Mono<ResponseEntity<CreateTransactionResponse>> {
 
-        TODO("Not yet implemented")
+        val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
+
+        return createTransactionRequest.map(transactionMapper::createTransactionRequestToDomain)
+            .flatMap(createTransactionUseCase::createTransaction)
+            .map(transactionMapper::domainToCreateTransactionResponse)
+            .map { ResponseEntity.ok(it) }
     }
 
     override fun getAccounts(userId: String?, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountsResponse>> {

@@ -1,6 +1,6 @@
 package es.atrujillo.sample.funwalletms.domain.events
 
-import es.atrujillo.sample.funwalletms.config.extensions.logInfo
+import es.atrujillo.sample.funwalletms.config.extensions.logDebug
 import es.atrujillo.sample.funwalletms.domain.model.base.DomainModel
 import reactor.core.publisher.FluxSink
 import java.util.function.Consumer
@@ -10,7 +10,7 @@ class DomainEventPublisherSink<T : DomainModel> : Consumer<FluxSink<DomainEventD
     private lateinit var domainEventSink: FluxSink<DomainEventData<T>>
 
     override fun accept(incomingSink: FluxSink<DomainEventData<T>>) {
-        logInfo("Accepting incoming flux sink")
+        logDebug("Accepting incoming flux sink")
         domainEventSink = incomingSink
     }
 
