@@ -45,6 +45,7 @@ class AccountService(private val accountRepository: AccountRepository, private v
         return validateThatAccountUserExists(account)
             .flatMap(this::validatePrimaryAccountIsPossible)
             .flatMap { accountRepository.saveAccount(it) }
+            .doOnNext { createdAccount -> publishDomainEvent("ACCOUNT_CREATED", createdAccount) }
     }
 
     override fun depositMoney(deposit: Deposit) {
