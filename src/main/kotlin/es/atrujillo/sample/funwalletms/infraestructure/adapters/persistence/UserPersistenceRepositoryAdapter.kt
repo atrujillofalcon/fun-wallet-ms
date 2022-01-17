@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 @Component
 class UserPersistenceRepositoryAdapter(val databaseRepository: UserDatabaseRepository) : UserRepository {
 
-    override fun get(id: Int): Mono<User> {
+    override fun get(id: String): Mono<User> {
         return databaseRepository.findById(id)
             .map { it.toDomain() }
     }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface UserDatabaseRepository : ReactiveCrudRepository<UserEntity, Int> {
+interface UserDatabaseRepository : ReactiveCrudRepository<UserEntity, String> {
 
     fun findUserEntitiesByUsername(username: String): Flux<UserEntity>
 

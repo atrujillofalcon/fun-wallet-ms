@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 
 interface UserRepository {
 
-    fun get(id: Int): Mono<User>
+    fun get(id: String): Mono<User>
 
     fun getByUsername(username: String): Flux<User>
 

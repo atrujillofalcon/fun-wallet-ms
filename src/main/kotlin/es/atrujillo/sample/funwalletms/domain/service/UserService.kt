@@ -7,7 +7,7 @@ import es.atrujillo.sample.funwalletms.domain.ports.UserRepository
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.UserCreationUseCase
 import reactor.core.publisher.Mono
 
-class UserService(val userRepository: UserRepository) : UserCreationUseCase {
+class UserService(private val userRepository: UserRepository) : UserCreationUseCase {
 
     override fun createUser(user: User): Mono<User> {
 

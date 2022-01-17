@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface AccountDatabaseRepository : ReactiveCrudRepository<AccountEntity, Int> {
+interface AccountDatabaseRepository : ReactiveCrudRepository<AccountEntity, String> {
 
-    fun findAccountEntitiesByUser(userId: Int): Flux<AccountEntity>
+    fun findAccountEntitiesByUserId(userId: String): Flux<AccountEntity>
 
 }

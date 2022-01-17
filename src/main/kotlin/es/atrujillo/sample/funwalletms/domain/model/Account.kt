@@ -1,8 +1,8 @@
 package es.atrujillo.sample.funwalletms.domain.model
 
 data class Account(
-    val id: Int,
-    val user: User,
+    val id: String,
+    val userId: String,
     val primary: Boolean,
     val type: AccountType,
     val currency: String,
