@@ -295,7 +295,7 @@ components:
           example: 45.20
         type:
           type: string
-          enum: [ "DEPOSIT", "WITHDRAWAL", "TRANSFER", "OPERATION" ]
+          enum: [ "DEPOSIT", "WITHDRAWAL", "TRANSFER", "PAYMENT" ]
         from:
           type: string
           description: Transaction origin

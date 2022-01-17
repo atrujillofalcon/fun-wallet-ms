@@ -1,7 +1,7 @@
 package es.atrujillo.sample.funwalletms.domain.service
 
 import es.atrujillo.sample.funwalletms.config.extensions.logInfo
-import es.atrujillo.sample.funwalletms.domain.errors.base.DomainError
+import es.atrujillo.sample.funwalletms.domain.errors.UserAlreadyExistsError
 import es.atrujillo.sample.funwalletms.domain.model.User
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.UserCreationUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.out.UserRepository
@@ -18,6 +18,6 @@ class UserService(private val userRepository: UserRepository) : UserCreationUseC
             .count()
             .filter { usernamesCount -> usernamesCount == 0L }
             .flatMap { userRepository.saveUser(user) }
-            .switchIfEmpty(Mono.error(DomainError("Username ${user.username} already exists", "USER_ALREADY_EXISTS", 400)))
+            .switchIfEmpty(Mono.error(UserAlreadyExistsError(user.username)))
     }
 }

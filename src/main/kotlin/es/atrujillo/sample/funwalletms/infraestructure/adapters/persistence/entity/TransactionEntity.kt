@@ -9,26 +9,26 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document
 data class TransactionEntity(
     @Indexed
-    val id: String,
+    val id: String?,
     @Indexed
     val accountId: String,
     val amount: Double,
     val type: TransactionType,
     val status: TransactionStatusType = TransactionStatusType.PENDING,
-    val fee: Double = 0.0,
     val from: String?,
-    val to: String?
+    val to: String?,
+    val fee: Double? = null,
 ) {
 
     fun toDomain(): Transaction {
-        return Transaction(id, accountId, amount, type, status, fee, from, to)
+        return Transaction(id, accountId, amount, type, status, from, to, fee)
     }
 
     companion object {
         fun fromDomain(transaction: Transaction): TransactionEntity {
             return TransactionEntity(
                 transaction.id, transaction.accountId, transaction.amount, transaction.type, transaction.status,
-                transaction.fee, transaction.from, transaction.to
+                transaction.from, transaction.to, transaction.fee
             )
         }
     }
