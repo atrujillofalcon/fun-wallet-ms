@@ -96,25 +96,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTransactionResponse"
-#  /accounts/{accountId}/deposits:
-#    post:
-#      operationId: createAccountDeposit
-#      description: Create a new deposit
-#      parameters:
-#        - $ref: "#/components/parameters/accountIdPathParam"
-#      requestBody:
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: '#/components/schemas/CreateDepositRequest'
-#      responses:
-#        201:
-#          description: Transactions list
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/GetAccountTransactionsResponse"
+  /accounts/{accountId}/deposits:
+    post:
+      operationId: createAccountDeposit
+      description: Create a new deposit
+      parameters:
+        - $ref: "#/components/parameters/accountIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDepositRequest'
+      responses:
+        201:
+          description: Deposit created
 components:
   parameters:
     accountIdPathParam:
@@ -225,6 +221,12 @@ components:
           $ref: "#/components/schemas/Transaction"
         metadata:
           $ref: "#/components/schemas/ResponseMetadata"
+    CreateDepositRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: "double"
     User:
       type: object
       description: User entity
@@ -278,6 +280,8 @@ components:
         id:
           type: string
           example: 1
+        accountId:
+          type: string
         fee:
           type: number
           format: "double"
@@ -289,8 +293,6 @@ components:
       type: object
       description: Transaction entity
       properties:
-        accountId:
-          type: string
         amount:
           type: number
           format: "double"

@@ -3,6 +3,7 @@ package es.atrujillo.sample.funwalletms.infraestructure.adapters.web
 import es.atrujillo.sample.funwalletms.api.AccountsApi
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountConsultUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountCreationUseCase
+import es.atrujillo.sample.funwalletms.domain.ports.`in`.DepositMoneyToAccountUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.TransactionCreationUseCase
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.AccountMapper
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.MapperMockUtility
@@ -17,7 +18,8 @@ import reactor.core.publisher.Mono
 class AccountController(
     val createAccountUseCase: AccountCreationUseCase,
     val accountConsultUseCase: AccountConsultUseCase,
-    val createTransactionUseCase: TransactionCreationUseCase
+    val createTransactionUseCase: TransactionCreationUseCase,
+    val createDepositMoneyUseCase: DepositMoneyToAccountUseCase
 ) : AccountsApi {
 
     private final val mapper: AccountMapper = Mappers.getMapper(AccountMapper::class.java)
@@ -31,15 +33,24 @@ class AccountController(
 
     }
 
-    override fun createAccountTransaction(accountId: String?, createTransactionRequest: Mono<CreateTransactionRequest>):
+    override fun createAccountTransaction(accountId: String, createTransactionRequest: Mono<CreateTransactionRequest>):
             Mono<ResponseEntity<CreateTransactionResponse>> {
 
         val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
 
-        return createTransactionRequest.map(transactionMapper::createTransactionRequestToDomain)
+        return createTransactionRequest.map { transactionMapper.createTransactionRequestToDomain(accountId, it) }
             .flatMap(createTransactionUseCase::createTransaction)
             .map(transactionMapper::domainToCreateTransactionResponse)
             .map { ResponseEntity.ok(it) }
+    }
+
+    override fun createAccountDeposit(accountId: String, createDepositRequest: Mono<CreateDepositRequest>): Mono<ResponseEntity<Void>> {
+
+        val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
+
+        return createDepositRequest.map { transactionMapper.createDepositRequestToDomain(accountId, it) }
+            .doOnNext(createDepositMoneyUseCase::depositMoney)
+            .map { ResponseEntity.ok().build() }
     }
 
     override fun getAccounts(userId: String?): Mono<ResponseEntity<GetAccountsResponse>> {
