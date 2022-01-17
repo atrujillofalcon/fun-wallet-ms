@@ -1,10 +1,7 @@
 package es.atrujillo.sample.funwalletms.infraestructure.adapters.web
 
 import es.atrujillo.sample.funwalletms.api.AccountsApi
-import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountConsultUseCase
-import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountCreationUseCase
-import es.atrujillo.sample.funwalletms.domain.ports.`in`.DepositMoneyToAccountUseCase
-import es.atrujillo.sample.funwalletms.domain.ports.`in`.TransactionCreationUseCase
+import es.atrujillo.sample.funwalletms.domain.ports.`in`.*
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.AccountMapper
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.MapperMockUtility
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.mapper.TransactionMapper
@@ -18,25 +15,25 @@ import reactor.core.publisher.Mono
 class AccountController(
     val createAccountUseCase: AccountCreationUseCase,
     val accountConsultUseCase: AccountConsultUseCase,
+    val createDepositMoneyUseCase: DepositMoneyToAccountUseCase,
     val createTransactionUseCase: TransactionCreationUseCase,
-    val createDepositMoneyUseCase: DepositMoneyToAccountUseCase
+    val transactionConsultUseCase: TransactionConsultUseCase,
 ) : AccountsApi {
 
-    private final val mapper: AccountMapper = Mappers.getMapper(AccountMapper::class.java)
+    private final val accountMapper: AccountMapper = Mappers.getMapper(AccountMapper::class.java)
+    private final val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
 
     override fun createAccount(createAccountRequest: Mono<CreateAccountRequest>): Mono<ResponseEntity<CreateAccountResponse>> {
 
-        return createAccountRequest.map(mapper::createAccountRequestToDomain)
+        return createAccountRequest.map(accountMapper::createAccountRequestToDomain)
             .flatMap(createAccountUseCase::createAccount)
-            .map(mapper::domainToCreateAccountResponse)
+            .map(accountMapper::domainToCreateAccountResponse)
             .map { ResponseEntity.ok(it) }
 
     }
 
     override fun createAccountTransaction(accountId: String, createTransactionRequest: Mono<CreateTransactionRequest>):
             Mono<ResponseEntity<CreateTransactionResponse>> {
-
-        val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
 
         return createTransactionRequest.map { transactionMapper.createTransactionRequestToDomain(accountId, it) }
             .flatMap(createTransactionUseCase::createTransaction)
@@ -46,16 +43,22 @@ class AccountController(
 
     override fun createAccountDeposit(accountId: String, createDepositRequest: Mono<CreateDepositRequest>): Mono<ResponseEntity<Void>> {
 
-        val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
-
         return createDepositRequest.map { transactionMapper.createDepositRequestToDomain(accountId, it) }
             .doOnNext(createDepositMoneyUseCase::depositMoney)
             .map { ResponseEntity.ok().build() }
     }
 
+    override fun getAccountTransactions(accountId: String): Mono<ResponseEntity<GetAccountTransactionsResponse>> {
+        return transactionConsultUseCase.getTransactionsByAccount(accountId)
+            .map(transactionMapper::domainToWebAccount)
+            .collectList()
+            .map { transactionList -> GetAccountTransactionsResponse().data(transactionList).metadata(MapperMockUtility.metadataMockCreator()) }
+            .map { ResponseEntity.ok(it) }
+    }
+
     override fun getAccounts(userId: String?): Mono<ResponseEntity<GetAccountsResponse>> {
         return accountConsultUseCase.getAccountByUser(userId)
-            .map(mapper::domainToWebAccount)
+            .map(accountMapper::domainToWebAccount)
             .collectList()
             .map { contractList -> GetAccountsResponse().data(contractList).metadata(MapperMockUtility.metadataMockCreator()) }
             .map { ResponseEntity.ok(it) }
@@ -63,13 +66,8 @@ class AccountController(
 
     override fun getAccountDetail(accountId: String): Mono<ResponseEntity<GetAccountDetailResponse>> {
         return accountConsultUseCase.getAccountById(accountId)
-            .map(mapper::domainToGetAccountDetailResponse)
+            .map(accountMapper::domainToGetAccountDetailResponse)
             .map { ResponseEntity.ok(it) }
     }
-
-    override fun getAccountTransactions(accountId: String?): Mono<ResponseEntity<GetAccountTransactionsResponse>> {
-        TODO("Not yet implemented")
-    }
-
 
 }

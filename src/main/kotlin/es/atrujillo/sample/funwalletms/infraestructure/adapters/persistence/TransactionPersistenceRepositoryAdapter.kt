@@ -16,8 +16,13 @@ class TransactionPersistenceRepositoryAdapter(val databaseRepository: Transactio
             .map { it.toDomain() }
     }
 
-    override fun getByAccount(accountId: String): Flux<Transaction> {
+    override fun getTransactionsByAccount(accountId: String): Flux<Transaction> {
         return databaseRepository.findTransactionEntitiesByAccountId(accountId)
+            .map { it.toDomain() }
+    }
+
+    override fun getTransactions(): Flux<Transaction> {
+        return databaseRepository.findAll()
             .map { it.toDomain() }
     }
 

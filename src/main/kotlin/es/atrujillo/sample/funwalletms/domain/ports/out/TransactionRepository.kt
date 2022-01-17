@@ -7,8 +7,10 @@ import reactor.core.publisher.Mono
 
 interface TransactionRepository {
 
-    fun saveTransaction(transaction: Transaction) : Mono<Transaction>
+    fun saveTransaction(transaction: Transaction): Mono<Transaction>
 
-    fun getByAccount(accountId: String): Flux<Transaction>
+    fun getTransactionsByAccount(accountId: String): Flux<Transaction>
+
+    fun getTransactions(): Flux<Transaction>
 
 }

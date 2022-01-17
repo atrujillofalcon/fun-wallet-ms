@@ -32,4 +32,6 @@ interface TransactionMapper {
     @Mapping(target = "amount", source = "request.amount")
     fun createDepositRequestToDomain(accountId: String, request: CreateDepositRequest): Deposit
 
+    fun domainToWebAccount(account: Transaction) : es.atrujillo.sample.funwalletms.model.Transaction
+
 }
