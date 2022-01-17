@@ -11,7 +11,6 @@ import es.atrujillo.sample.funwalletms.model.*
 import org.mapstruct.factory.Mappers
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 @RestController
@@ -23,7 +22,7 @@ class AccountController(
 
     private final val mapper: AccountMapper = Mappers.getMapper(AccountMapper::class.java)
 
-    override fun createAccount(createAccountRequest: Mono<CreateAccountRequest>, exchange: ServerWebExchange?): Mono<ResponseEntity<CreateAccountResponse>> {
+    override fun createAccount(createAccountRequest: Mono<CreateAccountRequest>): Mono<ResponseEntity<CreateAccountResponse>> {
 
         return createAccountRequest.map(mapper::createAccountRequestToDomain)
             .flatMap(createAccountUseCase::createAccount)
@@ -32,7 +31,7 @@ class AccountController(
 
     }
 
-    override fun createAccountTransaction(accountId: String?, createTransactionRequest: Mono<CreateTransactionRequest>, exchange: ServerWebExchange?):
+    override fun createAccountTransaction(accountId: String?, createTransactionRequest: Mono<CreateTransactionRequest>):
             Mono<ResponseEntity<CreateTransactionResponse>> {
 
         val transactionMapper = Mappers.getMapper(TransactionMapper::class.java)
@@ -43,7 +42,7 @@ class AccountController(
             .map { ResponseEntity.ok(it) }
     }
 
-    override fun getAccounts(userId: String?, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountsResponse>> {
+    override fun getAccounts(userId: String?): Mono<ResponseEntity<GetAccountsResponse>> {
         return accountConsultUseCase.getAccountByUser(userId)
             .map(mapper::domainToWebAccount)
             .collectList()
@@ -51,13 +50,13 @@ class AccountController(
             .map { ResponseEntity.ok(it) }
     }
 
-    override fun getAccountDetail(accountId: String, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountDetailResponse>> {
+    override fun getAccountDetail(accountId: String): Mono<ResponseEntity<GetAccountDetailResponse>> {
         return accountConsultUseCase.getAccountById(accountId)
             .map(mapper::domainToGetAccountDetailResponse)
             .map { ResponseEntity.ok(it) }
     }
 
-    override fun getAccountTransactions(accountId: String?, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountTransactionsResponse>> {
+    override fun getAccountTransactions(accountId: String?): Mono<ResponseEntity<GetAccountTransactionsResponse>> {
         TODO("Not yet implemented")
     }
 

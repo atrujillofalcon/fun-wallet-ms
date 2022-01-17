@@ -8,7 +8,6 @@ import es.atrujillo.sample.funwalletms.model.CreateUserResponse
 import org.mapstruct.factory.Mappers
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 @RestController
@@ -16,7 +15,7 @@ class UserController(val createUserUseCase: UserCreationUseCase) : UsersApi {
 
     private final val mapper: UserMapper = Mappers.getMapper(UserMapper::class.java)
 
-    override fun createUser(createUserRequest: Mono<CreateUserRequest>?, exchange: ServerWebExchange?): Mono<ResponseEntity<CreateUserResponse>> {
+    override fun createUser(createUserRequest: Mono<CreateUserRequest>?): Mono<ResponseEntity<CreateUserResponse>> {
 
         if (createUserRequest != null) {
 

@@ -50,6 +50,7 @@ dependencies {
 openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/doc/openapi/api-definition.yml".toString()
+    templateDir = "$rootDir/doc/openapi/templates".toString()
     apiPackage = "es.atrujillo.sample.funwalletms.api"
     modelPackage = "es.atrujillo.sample.funwalletms.model"
     configOptions = [
