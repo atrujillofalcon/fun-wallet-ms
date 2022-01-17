@@ -7,6 +7,6 @@ interface UserRepository {
 
     fun get(id: Int): Mono<User>
 
-    fun persistUser(user: Mono<User>) : Mono<User>
+    fun persistUser(user: User) : Mono<User>
 
 }

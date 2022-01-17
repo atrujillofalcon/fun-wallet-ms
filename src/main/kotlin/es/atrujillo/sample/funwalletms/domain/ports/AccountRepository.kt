@@ -8,6 +8,6 @@ interface AccountRepository {
 
     fun getByUser(userId: Int): Flux<Account>
 
-    fun saveAccount(user: Mono<Account>) : Mono<Account>
+    fun saveAccount(account: Mono<Account>) : Mono<Account>
 
 }

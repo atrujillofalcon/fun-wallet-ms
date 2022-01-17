@@ -192,7 +192,7 @@ components:
       description: User entity
       properties:
         id:
-          type: integer
+          type: string
           example: 1
         first_name:
           type: string
@@ -205,7 +205,7 @@ components:
       description: Account entity
       properties:
         id:
-          type: integer
+          type: string
           example: 10
         user_id:
           type: integer
@@ -226,7 +226,7 @@ components:
       description: Transaction entity
       properties:
         id:
-          type: integer
+          type: string
           example: 1
         account_id:
           type: integer
