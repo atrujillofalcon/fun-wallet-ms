@@ -2,12 +2,15 @@ package es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.ent
 
 import es.atrujillo.sample.funwalletms.domain.model.Account
 import es.atrujillo.sample.funwalletms.domain.model.AccountType
+import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.mapping.Document
 
+@Document
 data class AccountEntity(
     val id: String?,
-    val userId: String,
+    @Indexed val userId: String,
     val alias: String?,
-    val primary: Boolean,
+    @Indexed val primary: Boolean,
     val type: AccountType,
     val currency: String,
     val balance: Double

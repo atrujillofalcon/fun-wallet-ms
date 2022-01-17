@@ -16,6 +16,7 @@ class AccountService(private val accountRepository: AccountRepository, private v
         logInfo("EXECUTING BUSINESS LOGIC IN ACCOUNT CREATION")
 
         return validateThatAccountUserExists(account)
+            .flatMap(this::validatePrimaryAccountIsPossible)
             .flatMap { accountRepository.saveAccount(it) }
     }
 
@@ -31,6 +32,17 @@ class AccountService(private val accountRepository: AccountRepository, private v
             .filter { it != null }
             .map { account }
             .switchIfEmpty(Mono.error(DomainError("Username with userId ${account.userId} not found", "USER_NOT_FOUND", 400)))
+    }
+
+    private fun validatePrimaryAccountIsPossible(account: Account): Mono<Account> {
+
+        logInfo("VALIDATING THAT PRIMARY ACCOUNT IS POSSIBLE")
+
+            return accountRepository.getPrimaryAccountByUser(account.userId)
+                .filter { account.primary }
+                .flatMap{ Mono.error<DomainError>(DomainError("The user can only have one primary account", "EXISTING_PRIMARY_ACCOUNT", 400))}
+                .cast(Account::class.java)
+                .switchIfEmpty(Mono.just(account))
     }
 
 }

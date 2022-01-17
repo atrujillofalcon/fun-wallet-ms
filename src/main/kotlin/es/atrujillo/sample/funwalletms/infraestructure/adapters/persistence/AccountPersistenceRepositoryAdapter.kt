@@ -16,6 +16,11 @@ class AccountPersistenceRepositoryAdapter(val databaseRepository: AccountDatabas
             .map { it.toDomain() }
     }
 
+    override fun getPrimaryAccountByUser(userId: String): Mono<Account> {
+        return databaseRepository.findAccountEntitiesByPrimaryIsTrue()
+            .map { it.toDomain() }
+    }
+
     override fun saveAccount(account: Account): Mono<Account> {
         return databaseRepository.save(AccountEntity.fromDomain(account))
             .map { it.toDomain() }

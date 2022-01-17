@@ -2,7 +2,9 @@ package es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.ent
 
 import es.atrujillo.sample.funwalletms.domain.model.TransactionStatusType
 import es.atrujillo.sample.funwalletms.domain.model.TransactionType
+import org.springframework.data.mongodb.core.mapping.Document
 
+@Document
 data class TransactionEntity(
     val id: Int,
     val account: AccountEntity,
