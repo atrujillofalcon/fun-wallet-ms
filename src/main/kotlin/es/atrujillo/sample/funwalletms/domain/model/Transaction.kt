@@ -1,14 +1,14 @@
 package es.atrujillo.sample.funwalletms.domain.model
 
 data class Transaction(
-    val id: Int,
-    val account: Account,
+    val id: String,
+    val accountId: String,
     val amount: Double,
     val type: TransactionType,
     val status: TransactionStatusType = TransactionStatusType.PENDING,
     val fee: Double = 0.0,
-    val from: Account?,
-    val to: Account?
+    val from: String?,
+    val to: String?
 )
 
 enum class TransactionType {

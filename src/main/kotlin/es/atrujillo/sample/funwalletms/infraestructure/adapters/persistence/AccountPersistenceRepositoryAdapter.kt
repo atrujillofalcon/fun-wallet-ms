@@ -1,7 +1,7 @@
 package es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence
 
 import es.atrujillo.sample.funwalletms.domain.model.Account
-import es.atrujillo.sample.funwalletms.domain.ports.AccountRepository
+import es.atrujillo.sample.funwalletms.domain.ports.out.AccountRepository
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.entity.AccountEntity
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.repository.AccountDatabaseRepository
 import org.springframework.stereotype.Component

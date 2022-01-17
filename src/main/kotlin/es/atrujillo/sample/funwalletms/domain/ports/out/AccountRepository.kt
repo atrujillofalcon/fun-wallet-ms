@@ -1,4 +1,4 @@
-package es.atrujillo.sample.funwalletms.domain.ports
+package es.atrujillo.sample.funwalletms.domain.ports.out
 
 import es.atrujillo.sample.funwalletms.domain.model.Account
 import reactor.core.publisher.Flux

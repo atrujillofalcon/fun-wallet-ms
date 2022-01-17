@@ -1,4 +1,4 @@
-package es.atrujillo.sample.funwalletms.domain.ports
+package es.atrujillo.sample.funwalletms.domain.ports.out
 
 import es.atrujillo.sample.funwalletms.domain.model.User
 import reactor.core.publisher.Flux
@@ -10,6 +10,6 @@ interface UserRepository {
 
     fun getByUsername(username: String): Flux<User>
 
-    fun persistUser(user: User) : Mono<User>
+    fun saveUser(user: User) : Mono<User>
 
 }

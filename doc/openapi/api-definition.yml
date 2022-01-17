@@ -50,6 +50,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateAccountResponse'
+  /accounts/{accountId}:
+    get:
+      operationId: getAccountDetail
+      summary: Return an account detail
+      parameters:
+        - $ref: "#/components/parameters/accountIdParam"
+      responses:
+        200:
+          description: Account detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountDetailResponse"
   /accounts/{accountId}/transactions:
     get:
       operationId: getAccountTransactions
@@ -124,6 +137,15 @@ components:
         response_time:
           type: string
           format: "date-time"
+        pagination:
+          type: object
+          properties:
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            pageOffset:
+              type: integer
     CreateUserRequest:
       type: object
       required:
@@ -170,6 +192,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Transaction"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    GetAccountDetailResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Transaction"
         metadata:
           $ref: "#/components/schemas/ResponseMetadata"
     CreateTransactionRequest:

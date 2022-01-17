@@ -30,6 +30,10 @@ class AccountController(val createAccountUseCase: AccountCreationUseCase) : Acco
         TODO("Not yet implemented")
     }
 
+    override fun getAccountDetail(accountId: String?, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountDetailResponse>> {
+        TODO("Not yet implemented")
+    }
+
     override fun getAccountTransactions(accountId: String?, exchange: ServerWebExchange?): Mono<ResponseEntity<GetAccountTransactionsResponse>> {
         TODO("Not yet implemented")
     }
