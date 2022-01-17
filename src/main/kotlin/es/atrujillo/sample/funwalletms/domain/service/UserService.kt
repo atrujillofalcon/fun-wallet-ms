@@ -12,9 +12,13 @@ class UserService(val userRepository: UserRepository) : UserCreationUseCase {
 
     override fun createUser(user: User): Mono<User> {
 
-        // TODO aquí iría la lógica de negocio
         logInfo("EXECUTING BUSINESS LOGIC IN USER CREATION")
 
-        return userRepository.persistUser(user)
+        logInfo("VALIDATING THAT USERNAME IS UNIQUE")
+        return userRepository.getByUsername(user.username)
+            .count()
+            .filter { usernamesCount -> usernamesCount == 0L }
+            .flatMap { userRepository.persistUser(user) }
+            .switchIfEmpty(Mono.error(IllegalArgumentException("Username ${user.username} already exists in database")))
     }
 }

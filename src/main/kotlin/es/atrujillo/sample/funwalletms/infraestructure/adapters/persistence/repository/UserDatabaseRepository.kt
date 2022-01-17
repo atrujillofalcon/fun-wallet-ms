@@ -3,6 +3,11 @@ package es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.rep
 import es.atrujillo.sample.funwalletms.infraestructure.adapters.persistence.entity.UserEntity
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 
 @Repository
-interface UserDatabaseRepository : ReactiveCrudRepository<UserEntity, Int>
+interface UserDatabaseRepository : ReactiveCrudRepository<UserEntity, Int> {
+
+    fun findUserEntitiesByUsername(username: String): Flux<UserEntity>
+
+}
