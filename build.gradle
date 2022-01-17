@@ -1,0 +1,89 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.6.10"
+    id "org.openapi.generator" version "5.3.0"
+
+}
+
+group = 'es.atrujillo.sample'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation ("org.openapitools:jackson-databind-nullable:0.2.2")
+    implementation ("io.swagger:swagger-annotations:1.6.4")
+    implementation ("io.springfox:springfox-oas:3.0.0")
+
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+
+    implementation ("javax.validation:validation-api:2.0.1.Final")
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/doc/openapi/api-definition.yml".toString()
+    apiPackage = "es.atrujillo.sample.funwalletms.api"
+    modelPackage = "es.atrujillo.sample.funwalletms.model"
+    configOptions = [
+            dateLibrary: "java8",
+            java8: "true",
+            useOptional: "false",
+            skipDefaultInterface: "true",
+            reactive: "true",
+            interfaceOnly: "true",
+    ]
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+        freeCompilerArgs = ["-Xjsr305=strict"]
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generate-resources/src/main/java'
+        }
+    }
+}
+
+//sourceSets.main.java.srcDir "$buildDir/generate-resources/src/main/java"
+
+sourceSets {
+    main.java.srcDirs += "${buildDir}/generate-resources/main/src/main/java"
+}
+
+compileKotlin.dependsOn tasks.openApiGenerate

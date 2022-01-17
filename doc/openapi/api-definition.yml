@@ -1,0 +1,253 @@
+openapi: 3.0.2
+info:
+  title: Funk Bank Wallet API
+  description: ''
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /users:
+    post:
+      operationId: createUser
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        201:
+          description: Created user entity data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+  /accounts:
+    get:
+      operationId: getAccounts
+      summary: Return the account list
+      responses:
+        200:
+          description: Accounts list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountsResponse"
+    post:
+      operationId: createAccount
+      summary: Create a new bank account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        201:
+          description: Created account entity data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountResponse'
+  /accounts/{accountId}/transactions:
+    get:
+      operationId: getAccountTransactions
+      summary: Get transactions related to specific account
+      parameters:
+        - $ref: "#/components/parameters/accountIdParam"
+      responses:
+        200:
+          description: Transactions list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountTransactionsResponse"
+    post:
+      operationId: createAccountTransaction
+      summary: Create new transaction
+      parameters:
+        - $ref: "#/components/parameters/accountIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        201:
+          description: Transactions result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTransactionResponse"
+#  /accounts/{accountId}/deposits:
+#    post:
+#      operationId: createAccountDeposit
+#      description: Create a new deposit
+#      parameters:
+#        - $ref: "#/components/parameters/accountIdParam"
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/CreateDepositRequest'
+#      responses:
+#        201:
+#          description: Transactions list
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/GetAccountTransactionsResponse"
+components:
+  parameters:
+    accountIdParam:
+      name: accountId
+      in: path
+      description: Account identifier
+      required: true
+      schema:
+        type: string
+    userIdParam:
+      name: userId
+      in: path
+      description: User identifier
+      required: true
+      schema:
+        type: string
+  schemas:
+    ResponseMetadata:
+      type: object
+      description: Object to wrapper metadata info
+      properties:
+        response_time:
+          type: string
+          format: "date-time"
+    CreateUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - username
+      allOf:
+        - $ref: "#/components/schemas/User"
+    CreateUserResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/User"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    CreateAccountRequest:
+      type: object
+      required:
+        - user_id
+        - currency
+        - type
+      allOf:
+        - $ref: "#/components/schemas/Account"
+    CreateAccountResponse:
+      type: object
+      properties:
+        data:
+         $ref: "#/components/schemas/Account"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    GetAccountsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    GetAccountTransactionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    CreateTransactionRequest:
+      type: object
+      required:
+        - account_id
+        - amount
+        - type
+      allOf:
+        - $ref: "#/components/schemas/Transaction"
+    CreateTransactionResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Transaction"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    User:
+      type: object
+      description: User entity
+      properties:
+        id:
+          type: integer
+          example: 1
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+    Account:
+      type: object
+      description: Account entity
+      properties:
+        id:
+          type: integer
+          example: 10
+        user_id:
+          type: integer
+        primary:
+          type: boolean
+        type:
+          type: string
+          enum: [ WALLET, FIAT ]
+        currency:
+          type: string
+          example: "EUR"
+        balance:
+          type: number
+          format: "double"
+          example: 10000
+    Transaction:
+      type: object
+      description: Transaction entity
+      properties:
+        id:
+          type: integer
+          example: 1
+        account_id:
+          type: integer
+          example: 10
+        amount:
+          type: number
+          format: "double"
+          example: 45.20
+        fee:
+          type: number
+          format: "double"
+          example: 2.25
+        type:
+          type: string
+          enum: [ "DEPOSIT", "WITHDRAWAL", "TRANSFER", "OPERATION"]
+        status:
+          type: string
+          enum: [ "PENDING", "DONE", "CANCELLED", "FAILED" ]
+        from:
+          type: string
+          description: Transaction origin
+        to:
+          type: string
+          description: Transaction destiny
