@@ -28,3 +28,4 @@ This project simulates the following functionalities:
 - Bank user creation
 - Creation of accounts related to an user.
 - Accounts operations (deposit, transfers, account balance)
+- Domain events publish/subscribe

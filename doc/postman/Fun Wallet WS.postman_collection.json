@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "4f912eac-3659-47b6-8f13-629071c4261e",
+		"name": "Fun Wallet WS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Pedro\",\n    \"last_name\": \"Garcia\",\n    \"username\": \"pedrito95\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": \"61e565ed5350a8708ad59c7b\",\n    \"primary\": false,\n    \"alias\": \"Otra\",\n    \"type\": \"FIAT\",\n    \"currency\": \"EUR\",\n    \"balance\": 0.0\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/accounts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Accounts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/accounts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Account Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/accounts/:accountId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts",
+						":accountId"
+					],
+					"variable": [
+						{
+							"key": "accountId",
+							"value": "61e56bce898ffa3c8da147ad"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Account Transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/accounts/:accountId/transactions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts",
+						":accountId",
+						"transactions"
+					],
+					"variable": [
+						{
+							"key": "accountId",
+							"value": "61e601235f46c3433bbd1a84"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit Money to Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 20.0\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/accounts/:accountId/deposits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts",
+						":accountId",
+						"deposits"
+					],
+					"variable": [
+						{
+							"key": "accountId",
+							"value": "61e601235f46c3433bbd1a84"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer Money between Accounts",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 10,\n    \"type\": \"TRANSFER\",\n    \"to\": \"61e565ed5350a8708ad59c7b\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/accounts/:accountId/transactions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accounts",
+						":accountId",
+						"transactions"
+					],
+					"variable": [
+						{
+							"key": "accountId",
+							"value": "61e601235f46c3433bbd1a84"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
