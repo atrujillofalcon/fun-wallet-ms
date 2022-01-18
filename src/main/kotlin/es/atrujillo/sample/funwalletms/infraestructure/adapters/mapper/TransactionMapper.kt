@@ -15,6 +15,7 @@ interface TransactionMapper {
     @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "amount", source = "request.amount")
     @Mapping(target = "type", source = "request.type")
+    @Mapping(target = "status", constant = "PENDING")
     @Mapping(target = "from", source = "request.from")
     @Mapping(target = "to", source = "request.to")
     fun createTransactionRequestToDomain(accountId: String, request: CreateTransactionRequest): Transaction

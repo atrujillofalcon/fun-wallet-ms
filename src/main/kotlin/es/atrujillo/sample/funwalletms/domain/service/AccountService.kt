@@ -3,6 +3,7 @@ package es.atrujillo.sample.funwalletms.domain.service
 import es.atrujillo.sample.funwalletms.config.extensions.logInfo
 import es.atrujillo.sample.funwalletms.domain.errors.AccountNotFoundError
 import es.atrujillo.sample.funwalletms.domain.errors.ExistingPrimaryAccountError
+import es.atrujillo.sample.funwalletms.domain.errors.UnsupportedTransactionType
 import es.atrujillo.sample.funwalletms.domain.errors.UserNotFoundError
 import es.atrujillo.sample.funwalletms.domain.errors.base.DomainError
 import es.atrujillo.sample.funwalletms.domain.model.Account
@@ -17,8 +18,8 @@ import es.atrujillo.sample.funwalletms.domain.service.base.BaseDomainService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class AccountService(private val accountRepository: AccountRepository, private val userRepository: UserRepository)
-    : BaseDomainService<Account>(), AccountCreationUseCase, AccountConsultUseCase, AccountUpdateBalanceUseCase {
+class AccountService(private val accountRepository: AccountRepository, private val userRepository: UserRepository) : BaseDomainService<Account>(), AccountCreationUseCase, AccountConsultUseCase,
+    AccountUpdateBalanceUseCase {
 
     override fun getAccountById(accountId: String): Mono<Account> {
 
@@ -53,9 +54,22 @@ class AccountService(private val accountRepository: AccountRepository, private v
 
         logInfo("EXECUTING BUSINESS LOGIC IN UPDATING BALANCE BY TRANSACTION")
 
-        return getAccountById(transaction.accountId)
-            .map{ calculateBalanceResultByTransaction(it, transaction) }
-            .flatMap(accountRepository::saveAccount)
+        if (transaction.type == TransactionType.DEPOSIT) {
+            return getAccountById(transaction.accountId)
+                .map { calculateBalanceResultByTransaction(it, transaction, true) }
+                .flatMap(accountRepository::saveAccount)
+        }
+
+        if (transaction.type == TransactionType.TRANSFER && transaction.to != null) {
+            return getAccountById(transaction.accountId)
+                .map { calculateBalanceResultByTransaction(it, transaction, false) }
+                .flatMap(accountRepository::saveAccount)
+                .flatMap{ getAccountById(transaction.to) }
+                .map { calculateBalanceResultByTransaction(it, transaction, true) }
+                .flatMap(accountRepository::saveAccount)
+        }
+
+        throw UnsupportedTransactionType()
     }
 
     private fun validateThatAccountUserExists(account: Account): Mono<Account> {
@@ -79,14 +93,14 @@ class AccountService(private val accountRepository: AccountRepository, private v
             .switchIfEmpty(Mono.just(account))
     }
 
-    private fun calculateBalanceResultByTransaction(account: Account, transaction: Transaction) : Account {
-
-        if(transaction.type == TransactionType.DEPOSIT) {
-            val finalBalance = account.balance - transaction.fee!! + transaction.amount
-            account.balance = finalBalance
-            return account;
+    private fun calculateBalanceResultByTransaction(account: Account, transaction: Transaction, positiveSign: Boolean): Account {
+        val partialBalance = (account.balance - transaction.fee!!)
+        account.balance = if (positiveSign) {
+            partialBalance.plus(transaction.amount)
+        } else {
+            partialBalance.minus(transaction.amount)
         }
-        throw UnsupportedOperationException()
+        return account;
     }
 
 }
