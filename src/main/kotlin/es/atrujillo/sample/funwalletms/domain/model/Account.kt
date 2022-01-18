@@ -9,7 +9,7 @@ data class Account(
     val primary: Boolean,
     val type: AccountType,
     val currency: String,
-    val balance: Double
+    var balance: Double
 ) : DomainModel()
 
 enum class AccountType {

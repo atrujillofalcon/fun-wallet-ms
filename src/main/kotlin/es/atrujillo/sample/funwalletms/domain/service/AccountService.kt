@@ -6,19 +6,19 @@ import es.atrujillo.sample.funwalletms.domain.errors.ExistingPrimaryAccountError
 import es.atrujillo.sample.funwalletms.domain.errors.UserNotFoundError
 import es.atrujillo.sample.funwalletms.domain.errors.base.DomainError
 import es.atrujillo.sample.funwalletms.domain.model.Account
-import es.atrujillo.sample.funwalletms.domain.model.Deposit
 import es.atrujillo.sample.funwalletms.domain.model.Transaction
+import es.atrujillo.sample.funwalletms.domain.model.TransactionType
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountConsultUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountCreationUseCase
-import es.atrujillo.sample.funwalletms.domain.ports.`in`.DepositMoneyToAccountUseCase
+import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountUpdateBalanceUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.out.AccountRepository
 import es.atrujillo.sample.funwalletms.domain.ports.out.UserRepository
 import es.atrujillo.sample.funwalletms.domain.service.base.BaseDomainService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class AccountService(private val accountRepository: AccountRepository, private val userRepository: UserRepository, private val transactionService: TransactionService)
-    : BaseDomainService<Account>(), AccountCreationUseCase, AccountConsultUseCase, DepositMoneyToAccountUseCase {
+class AccountService(private val accountRepository: AccountRepository, private val userRepository: UserRepository)
+    : BaseDomainService<Account>(), AccountCreationUseCase, AccountConsultUseCase, AccountUpdateBalanceUseCase {
 
     override fun getAccountById(accountId: String): Mono<Account> {
 
@@ -49,13 +49,13 @@ class AccountService(private val accountRepository: AccountRepository, private v
             .doOnNext { createdAccount -> publishDomainEvent("ACCOUNT_CREATED", createdAccount) }
     }
 
-    override fun depositMoney(deposit: Deposit) : Mono<Transaction> {
+    override fun updateAccountBalance(transaction: Transaction): Mono<Account> {
 
-        logInfo("EXECUTING BUSINESS LOGIC IN DEPOSIT MONEY CREATION")
+        logInfo("EXECUTING BUSINESS LOGIC IN UPDATING BALANCE BY TRANSACTION")
 
-        val transaction = deposit.toTransaction()
-
-        return transactionService.createTransaction(transaction)
+        return getAccountById(transaction.accountId)
+            .map{ calculateBalanceResultByTransaction(it, transaction) }
+            .flatMap(accountRepository::saveAccount)
     }
 
     private fun validateThatAccountUserExists(account: Account): Mono<Account> {
@@ -77,6 +77,16 @@ class AccountService(private val accountRepository: AccountRepository, private v
             .flatMap { Mono.error<DomainError>(ExistingPrimaryAccountError()) }
             .cast(Account::class.java)
             .switchIfEmpty(Mono.just(account))
+    }
+
+    private fun calculateBalanceResultByTransaction(account: Account, transaction: Transaction) : Account {
+
+        if(transaction.type == TransactionType.DEPOSIT) {
+            val finalBalance = account.balance - transaction.fee!! + transaction.amount
+            account.balance = finalBalance
+            return account;
+        }
+        throw UnsupportedOperationException()
     }
 
 }

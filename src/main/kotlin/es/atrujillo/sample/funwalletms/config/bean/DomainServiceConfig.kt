@@ -18,13 +18,13 @@ class DomainServiceConfig {
     }
 
     @Bean
-    fun domainAccountService(accountRepository: AccountRepository, userRepository: UserRepository, transactionService: TransactionService) : AccountService {
-        return AccountService(accountRepository, userRepository, transactionService)
+    fun domainAccountService(accountRepository: AccountRepository, userRepository: UserRepository) : AccountService {
+        return AccountService(accountRepository, userRepository)
     }
 
     @Bean
-    fun domainTransactionService(transactionRepository: TransactionRepository, accountRepository: AccountRepository) : TransactionService {
-        return TransactionService(transactionRepository, accountRepository)
+    fun domainTransactionService(transactionRepository: TransactionRepository, accountService: AccountService) : TransactionService {
+        return TransactionService(transactionRepository, accountService)
     }
 
 }
