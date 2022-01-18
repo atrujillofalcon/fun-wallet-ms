@@ -15,6 +15,7 @@ class UserService(private val userRepository: UserRepository) : BaseDomainServic
         logInfo("EXECUTING BUSINESS LOGIC IN USER CREATION")
 
         logInfo("VALIDATING THAT USERNAME IS UNIQUE")
+
         return userRepository.getByUsername(user.username)
             .count()
             .filter { usernamesCount -> usernamesCount == 0L }
