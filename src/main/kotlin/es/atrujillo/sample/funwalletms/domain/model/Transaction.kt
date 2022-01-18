@@ -16,7 +16,7 @@ data class Transaction(
 
     fun calculateFee() {
         logInfo("CALCULATING FEE FOR TRANSACTION BUSINESS LOGIC")
-        fee = amount.div((1..10).random())
+        fee = amount.div((10..20).random())
         logInfo("FEE SETTLED TO $fee of total amount $amount")
     }
 }
