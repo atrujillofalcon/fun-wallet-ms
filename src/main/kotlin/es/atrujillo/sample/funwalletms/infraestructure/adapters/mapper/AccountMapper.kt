@@ -30,7 +30,7 @@ interface AccountMapper {
     @Mapping(target = "data.currency", source = "currency")
     @Mapping(target = "data.primary", source = "primary")
     @Mapping(target = "data.type", source = "type")
-    @Mapping(target = "data.transactionsResource", expression = "java(\"/accounts/\" + account.getId() + \"/transaction\")")
+    @Mapping(target = "data.transactionsResource", expression = "java(\"/accounts/\" + account.getId() + \"/transactions\")")
     @Mapping(target = "metadata", expression = "java(MapperMockUtility.Companion.metadataMockCreator())")
     fun domainToGetAccountDetailResponse(account: Account): GetAccountDetailResponse
 

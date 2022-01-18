@@ -7,6 +7,7 @@ import es.atrujillo.sample.funwalletms.domain.errors.UserNotFoundError
 import es.atrujillo.sample.funwalletms.domain.errors.base.DomainError
 import es.atrujillo.sample.funwalletms.domain.model.Account
 import es.atrujillo.sample.funwalletms.domain.model.Deposit
+import es.atrujillo.sample.funwalletms.domain.model.Transaction
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountConsultUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.AccountCreationUseCase
 import es.atrujillo.sample.funwalletms.domain.ports.`in`.DepositMoneyToAccountUseCase
@@ -48,13 +49,13 @@ class AccountService(private val accountRepository: AccountRepository, private v
             .doOnNext { createdAccount -> publishDomainEvent("ACCOUNT_CREATED", createdAccount) }
     }
 
-    override fun depositMoney(deposit: Deposit) {
+    override fun depositMoney(deposit: Deposit) : Mono<Transaction> {
 
         logInfo("EXECUTING BUSINESS LOGIC IN DEPOSIT MONEY CREATION")
 
         val transaction = deposit.toTransaction()
 
-        transactionService.createTransaction(transaction)
+        return transactionService.createTransaction(transaction)
     }
 
     private fun validateThatAccountUserExists(account: Account): Mono<Account> {

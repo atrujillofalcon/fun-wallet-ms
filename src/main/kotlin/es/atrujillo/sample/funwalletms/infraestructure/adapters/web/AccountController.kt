@@ -41,11 +41,13 @@ class AccountController(
             .map { ResponseEntity.ok(it) }
     }
 
-    override fun createAccountDeposit(accountId: String, createDepositRequest: Mono<CreateDepositRequest>): Mono<ResponseEntity<Void>> {
+    override fun createAccountDeposit(accountId: String, createDepositRequest: Mono<CreateDepositRequest>): Mono<ResponseEntity<CreateTransactionResponse>> {
 
         return createDepositRequest.map { transactionMapper.createDepositRequestToDomain(accountId, it) }
-            .doOnNext(createDepositMoneyUseCase::depositMoney)
-            .map { ResponseEntity.ok().build() }
+            .flatMap(createDepositMoneyUseCase::depositMoney)
+//            .subscribe { transaction -> logInfo("Deposit created $transaction") }
+            .map(transactionMapper::domainToCreateTransactionResponse)
+            .map { ResponseEntity.ok(it) }
     }
 
     override fun getAccountTransactions(accountId: String): Mono<ResponseEntity<GetAccountTransactionsResponse>> {

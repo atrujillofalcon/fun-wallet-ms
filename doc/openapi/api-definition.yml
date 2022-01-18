@@ -111,6 +111,10 @@ paths:
       responses:
         201:
           description: Deposit created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTransactionResponse"
 components:
   parameters:
     accountIdPathParam:
